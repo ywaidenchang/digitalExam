@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: linear-gradient(145deg, #bbdefb, #90caf9);
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 320px;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #64b5f6;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        #listItems {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        #listItems li {
+            padding: 14px;
+            margin-bottom: 10px;
+            background-color: #e3f2fd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        #listItems li:hover {
+            background-color: #bbdefb;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="text" id="searchInput" onkeyup="filterList()" placeholder="Search for items...">
+        <ul id="listItems">
+            <li onclick="itemClicked(this)">Item 1</li>
+            <li onclick="itemClicked(this)">Item 2</li>
+            <li onclick="itemClicked(this)">Item 3</li>
+            <li onclick="itemClicked(this)">fuck yoour mom</li>
+            <li onclick="itemClicked(this)">Item 5</li>
+        </ul>
+    </div>
+
+    <script>
+        function filterList() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const ul = document.getElementById('listItems');
+            const li = ul.getElementsByTagName('li');
+
+            for (let i = 0; i < li.length; i++) {
+                const item = li[i];
+                const textValue = item.textContent || item.innerText;
+                if (textValue.toLowerCase().indexOf(filter) > -1) {
+                    item.style.display = "";
+                } else {
+                    item.style.display = "none";
+                }
+            }
+        }
+
+        function itemClicked(element) {
+            alert('You clicked on ' + element.innerText);
+        }
+    </script>
+</body>
+</html>
