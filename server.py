@@ -7,7 +7,7 @@ app = Flask(__name__)
 def home():
     return render_template("home.html")
 
-@app.route('teacher')
+@app.route('/teacher')
 def teacher():
     return "teacher"
 
