@@ -9,7 +9,7 @@ def home():
 
 @app.route('/teacher')
 def teacher():
-    return "teacher"
+    return render_template("teacher.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
