@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Themed Searchable List</title>
+    <title>Home</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -20,7 +20,7 @@
             border-radius: 12px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 400px; /* Increased width */
+            width: 400px;
         }
         #searchInput {
             width: 100%;
@@ -35,7 +35,7 @@
             list-style-type: none;
             padding: 0;
             margin: 0;
-            max-height: 300px; /* Increased height */
+            max-height: 300px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -63,7 +63,7 @@
             width: 100%;
             padding: 12px;
             margin-top: 20px;
-            background-color: #1e88e5; /* Thicker color */
+            background-color: #1e88e5;
             color: white;
             border: none;
             border-radius: 8px;
@@ -93,24 +93,27 @@
 </head>
 <body>
     <div class="container">
-        <input type="text" id="searchInput" onkeyup="filterList()" placeholder="Search for items...">
-        <ul id="listItems">
-            <li onclick="itemClicked(this)">Item 1</li>
-            <li onclick="itemClicked(this)">Item 2</li>
-            <li onclick="itemClicked(this)">Item 3</li>
-            <li onclick="itemClicked(this)">Item 4</li>
-            <li onclick="itemClicked(this)">Item 5</li>
-            <li onclick="itemClicked(this)">Item 6</li>
-            <li onclick="itemClicked(this)">Item 7</li>
-            <li onclick="itemClicked(this)">Item 8</li>
-            <li onclick="itemClicked(this)">Item 9</li>
-            <li onclick="itemClicked(this)">Item 10</li>
-        </ul>
+        <input type="text" id="searchInput" onkeyup="filterList()" placeholder="Search for quizzes...">
+        <ul id="listItems"></ul>
         <button id="enterButton">Enter</button>
     </div>
-    <a href="/teacher" id="teacherButton">Teacher</a>
+    <a href="/teacher-login" id="teacherButton">Teacher</a>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/get_quizzes')
+                .then(response => response.json())
+                .then(data => {
+                    const listItems = document.getElementById('listItems');
+                    data.quizzes.forEach(quiz => {
+                        const li = document.createElement('li');
+                        li.textContent = quiz.title;
+                        li.onclick = () => itemClicked(li);
+                        listItems.appendChild(li);
+                    });
+                });
+        });
+
         function filterList() {
             const input = document.getElementById('searchInput');
             const filter = input.value.toLowerCase();

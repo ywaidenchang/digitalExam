@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .quiz-creation, .quiz-list {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .quiz-creation h2, .quiz-list h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #1e88e5;
+            border-bottom: 2px solid #1e88e5;
+            padding-bottom: 10px;
+        }
+        .quiz-creation input[type="text"],
+        .quiz-creation textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .quiz-creation input[type="text"]:hover,
+        .quiz-creation textarea:hover {
+            border-color: #1e88e5;
+            box-shadow: 0 0 8px rgba(30, 136, 229, 0.5);
+        }
+        .quiz-creation button {
+            padding: 15px 20px;
+            background-color: #1e88e5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .quiz-creation button:hover {
+            background-color: #1565c0;
+            transform: translateY(-2px);
+        }
+        .quiz-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .quiz-item:last-child {
+            border-bottom: none;
+        }
+        .quiz-item .quiz-title {
+            flex-grow: 1;
+        }
+        .quiz-item button {
+            margin-left: 10px;
+            padding: 10px 15px;
+            background-color: #1e88e5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .quiz-item button:hover {
+            background-color: #1565c0;
+            transform: translateY(-2px);
+        }
+        .quiz-item button.delete {
+            background-color: #e57373;
+        }
+        .quiz-item button.delete:hover {
+            background-color: #d32f2f;
+        }
+        .confirm-delete {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+        .confirm-delete .confirm-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .confirm-delete .confirm-box button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .confirm-delete .confirm-box .confirm {
+            background-color: #e57373;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        .confirm-delete .confirm-box .cancel {
+            background-color: #ccc;
+            color: black;
+            border: none;
+            border-radius: 4px;
+        }
+        .message-box {
+            display: none;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .message-box.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .message-box.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-creation">
+        <h2>Create a New Quiz</h2>
+        <form id="quiz-form">
+            <input type="text" name="quiz-title" placeholder="Quiz Title" required>
+            <textarea name="quiz-description" placeholder="Quiz Description" rows="4" required></textarea>
+            <button type="submit">Create Quiz</button>
+        </form>
+    </div>
+    <div class="quiz-list">
+        <h2>Existing Quizzes</h2>
+        <div id="quiz-container">
+            <!-- Quizzes will be dynamically loaded here -->
+        </div>
+    </div>
+    <div class="confirm-delete" id="confirm-delete">
+        <div class="confirm-box">
+            <p>Are you sure you want to delete this quiz?</p>
+            <button class="confirm">Yes</button>
+            <button class="cancel">No</button>
+        </div>
+    </div>
+    <div class="message-box" id="message-box"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadQuizzes();
+
+            document.getElementById('quiz-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const title = event.target['quiz-title'].value;
+                const description = event.target['quiz-description'].value;
+
+                fetch('/add_quiz', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title, description })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showMessage(data.message, 'success');
+                    loadQuizzes();
+                    event.target.reset(); // Clear the form fields
+                })
+                .catch(error => {
+                    showMessage('Failed to create quiz', 'error');
+                });
+            });
+        });
+
+        function loadQuizzes() {
+            fetch('/get_quizzes')
+                .then(response => response.json())
+                .then(data => {
+                    const quizContainer = document.getElementById('quiz-container');
+                    quizContainer.innerHTML = '';
+                    data.quizzes.forEach(quiz => {
+                        const quizItem = document.createElement('div');
+                        quizItem.className = 'quiz-item';
+                        quizItem.setAttribute('data-id', quiz.id);
+                        quizItem.innerHTML = `
+                            <div class="quiz-title">${quiz.title}</div>
+                            <button class="delete">Delete</button>
+                        `;
+                        quizContainer.appendChild(quizItem);
+                    });
+                    addEventListeners();
+                })
+                .catch(error => {
+                    showMessage('Failed to load quizzes', 'error');
+                });
+        }
+
+        function addEventListeners() {
+            document.querySelectorAll('.delete').forEach(button => {
+                button.addEventListener('click', function() {
+                    const quizItem = this.parentElement;
+                    const quizId = quizItem.getAttribute('data-id');
+                    const confirmDelete = document.getElementById('confirm-delete');
+                    confirmDelete.style.display = 'flex';
+
+                    confirmDelete.querySelector('.confirm').onclick = function() {
+                        fetch(`/delete_quiz/${quizId}`, {
+                            method: 'DELETE'
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            showMessage(data.message, 'success');
+                            loadQuizzes();
+                            confirmDelete.style.display = 'none';
+                        })
+                        .catch(error => {
+                            showMessage('Failed to delete quiz', 'error');
+                        });
+                    };
+
+                    confirmDelete.querySelector('.cancel').onclick = function() {
+                        confirmDelete.style.display = 'none';
+                    };
+                });
+            });
+        }
+
+        function showMessage(message, type) {
+            const messageBox = document.getElementById('message-box');
+            messageBox.textContent = message;
+            messageBox.className = `message-box ${type}`;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

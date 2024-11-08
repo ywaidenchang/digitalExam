@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+        .login-container:hover {
+            transform: scale(1.05);
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+        }
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 18px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .login-container input[type="text"]:hover,
+        .login-container input[type="password"]:hover {
+            border-color: #1e88e5;
+            box-shadow: 0 0 8px rgba(30, 136, 229, 0.5);
+        }
+        .login-container button {
+            width: 100%;
+            padding: 15px;
+            background-color: #1e88e5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .login-container button:hover {
+            background-color: #1565c0;
+            transform: translateY(-2px);
+        }
+        .error-message {
+            color: white;
+            background-color: #e57373;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none; /* Initially hidden */
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="error-message" id="error-message">
+              {{ messages[0] }}
+            </div>
+          {% endif %}
+        {% endwith %}
+        <form action="/login-post" method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Teacher Login</button>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorMessage = document.getElementById('error-message');
+            if (errorMessage) {
+                errorMessage.style.display = 'block'; // Show error message if it exists
+            }
+        });
+    </script>
+</body>
+</html>
