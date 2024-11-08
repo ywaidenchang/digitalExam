@@ -89,6 +89,12 @@
         .quiz-item button.delete:hover {
             background-color: #d32f2f;
         }
+        .quiz-item button.edit {
+            background-color: #ffb74d;
+        }
+        .quiz-item button.edit:hover {
+            background-color: #f57c00;
+        }
         .confirm-delete {
             display: none;
             background-color: rgba(0, 0, 0, 0.5);
@@ -205,6 +211,7 @@
                         quizItem.setAttribute('data-id', quiz.id);
                         quizItem.innerHTML = `
                             <div class="quiz-title">${quiz.title}</div>
+                            <button class="edit">Edit</button>
                             <button class="delete">Delete</button>
                         `;
                         quizContainer.appendChild(quizItem);
@@ -244,6 +251,13 @@
                     };
                 });
             });
+
+            document.querySelectorAll('.edit').forEach(button => {
+                button.addEventListener('click', function() {
+                    const quizId = this.parentElement.getAttribute('data-id');
+                    window.location.href = `/edit/${quizId}`;
+                });
+            });
         }
 
         function showMessage(message, type) {
@@ -258,3 +272,4 @@
     </script>
 </body>
 </html>
+``
