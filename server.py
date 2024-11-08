@@ -53,7 +53,7 @@ def add_quiz():
     new_quiz = Quiz(title=data['title'], description=data['description'])
     db.session.add(new_quiz)
     db.session.commit()
-    return jsonify({'message': 'New quiz created successfully'})
+    return jsonify({'message': 'New quiz created successfully'})#, redirect("/edit/<int:quiz_id>")
 
 @app.route('/update_quiz/<int:quiz_id>', methods=['PUT'])
 def update_quiz(quiz_id):
@@ -70,6 +70,10 @@ def delete_quiz(quiz_id):
     db.session.delete(quiz)
     db.session.commit()
     return jsonify({'message': 'Quiz deleted successfully'})
+
+@app.route("/edit/<int:quiz_id>")
+def edit(quiz_id):
+    return render_template("edit.html")
 
 @app.route('/get_quizzes', methods=['GET'])
 def get_quizzes():

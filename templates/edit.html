@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 600px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .question h3 {
+            margin-top: 0;
+        }
+        .answers {
+            margin-top: 10px;
+        }
+        .answers .answer {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .answers .answer input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .answers .answer button {
+            background-color: #e57373;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .add-button {
+            background-color: #64b5f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .submit-button {
+            background-color: #1e88e5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Quiz</h1>
+        <form id="quizForm">
+            <div class="form-group">
+                <label for="quizTitle">Quiz Title</label>
+                <input type="text" id="quizTitle" name="quizTitle" required>
+            </div>
+            <div id="questionsContainer"></div>
+            <button type="button" class="add-button" onclick="addQuestion()">Add Question</button>
+            <button type="submit" class="submit-button">Save Quiz</button>
+        </form>
+    </div>
+
+    <script>
+        function addQuestion() {
+            const questionsContainer = document.getElementById('questionsContainer');
+            const questionCount = questionsContainer.children.length + 1;
+
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+            questionDiv.innerHTML = `
+                <h3>Question ${questionCount}</h3>
+                <div class="form-group">
+                    <label for="question${questionCount}">Question</label>
+                    <textarea id="question${questionCount}" name="question${questionCount}" required></textarea>
+                </div>
+                <div class="answers" id="answers${questionCount}">
+                    <div class="answer">
+                        <input type="text" name="answer${questionCount}_1" placeholder="Answer 1" required>
+                        <button type="button" onclick="removeAnswer(this)">Remove</button>
+                    </div>
+                </div>
+                <button type="button" class="add-button" onclick="addAnswer(${questionCount})">Add Answer</button>
+            `;
+            questionsContainer.appendChild(questionDiv);
+        }
+
+        function addAnswer(questionNumber) {
+            const answersContainer = document.getElementById(`answers${questionNumber}`);
+            const answerCount = answersContainer.children.length + 1;
+
+            const answerDiv = document.createElement('div');
+            answerDiv.className = 'answer';
+            answerDiv.innerHTML = `
+                <input type="text" name="answer${questionNumber}_${answerCount}" placeholder="Answer ${answerCount}" required>
+                <button type="button" onclick="removeAnswer(this)">Remove</button>
+            `;
+            answersContainer.appendChild(answerDiv);
+        }
+
+        function removeAnswer(button) {
+            const answerDiv = button.parentElement;
+            answerDiv.remove();
+        }
+
+        document.getElementById('quizForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Handle form submission logic here
+            alert('Quiz saved!');
+        });
+    </script>
+</body>
+</html>
